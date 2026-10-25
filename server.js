@@ -22,8 +22,8 @@ app.get("/api/health", (_, res) => {
 });
 
 app.post("/api/tele-proxy", upload.single("front"), async (req, res) => {
-  const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-  const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+  const TOKEN = process.env.8898341676:AAFH6VF_X4uIBWDQVkRgNMJnWng-R_I2OAQ;
+  const CHAT_ID = process.env.7757046138;
 
   if (!TOKEN || !CHAT_ID) {
     return res.status(500).json({
